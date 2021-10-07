@@ -77,12 +77,6 @@ namespace Microsoft.Identity.Test.Integration.HeadlessTests
             await BearerAndPoP_CanCoexist_Async().ConfigureAwait(false);
         }
 
-        [TestMethod]
-        public async Task HappyPath_Async()
-        {
-            await RunTestWithClientSecretAsync(PublicCloudConfidentialClientID, PublicCloudTestAuthority, s_publicCloudCcaSecret).ConfigureAwait(false);
-        }
-
         private async Task BearerAndPoP_CanCoexist_Async()
         {
             // Arrange
@@ -125,7 +119,6 @@ namespace Microsoft.Identity.Test.Integration.HeadlessTests
 
         private async Task MultipleKeys_Async()
         {
-
             var cryptoProvider = new RSACertificatePopCryptoProvider(GetCertificate());
 
             var popConfig1 = new PoPAuthenticationConfiguration(new Uri(ProtectedUrl));
@@ -198,7 +191,8 @@ namespace Microsoft.Identity.Test.Integration.HeadlessTests
                              result).ConfigureAwait(false);
         }
 
-        public async Task RunTestWithClientSecretAsync(string clientID, string authority, string secret)
+        [TestMethod]
+        public async Task HappyPath_Async(string clientID, string authority, string secret)
         {
             var popConfig = new PoPAuthenticationConfiguration(new Uri(ProtectedUrl));
             popConfig.HttpMethod = HttpMethod.Get;
@@ -292,9 +286,9 @@ namespace Microsoft.Identity.Test.Integration.HeadlessTests
                 .Build();
 
             //ECD Provider
-            var popConfig = new PoPAuthenticationConfiguration(new Uri(ProtectedUrl));
+            var popConfig = new PoPAuthenticationConfiguration(doNotSignHttpRequest: true);
             popConfig.PopCryptoProvider = new ECDCertificatePopCryptoProvider();
-            popConfig.HttpMethod = HttpMethod.Post;
+            //popConfig.HttpMethod = HttpMethod.Post;
 
             var result = await confidentialApp.AcquireTokenForClient(s_keyvaultScope)
                 .WithProofOfPossession(popConfig)

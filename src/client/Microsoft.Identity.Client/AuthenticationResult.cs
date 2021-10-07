@@ -39,6 +39,7 @@ namespace Microsoft.Identity.Client
         /// <param name="tokenType">The token type, defaults to Bearer. Note: this property is experimental and may change in future versions of the library.</param>
         /// <param name="authenticationResultMetadata">Contains metadata related to the Authentication Result.</param>
         /// <param name="claimsPrincipal">Claims from the ID token</param>
+        /// <param name="popDetails"></param>
         public AuthenticationResult( // for backwards compat with 4.16-
             string accessToken,
             bool isExtendedLifeTimeToken,
@@ -52,7 +53,8 @@ namespace Microsoft.Identity.Client
             Guid correlationId,
             string tokenType = "Bearer",
             AuthenticationResultMetadata authenticationResultMetadata = null, 
-            ClaimsPrincipal claimsPrincipal = null)
+            ClaimsPrincipal claimsPrincipal = null, 
+            PoPDetails popDetails = null)
         {
             AccessToken = accessToken;
             IsExtendedLifeTimeToken = isExtendedLifeTimeToken;
@@ -67,6 +69,7 @@ namespace Microsoft.Identity.Client
             TokenType = tokenType;
             AuthenticationResultMetadata = authenticationResultMetadata;
             ClaimsPrincipal = claimsPrincipal;
+            this.PoPDetails = popDetails;
         }
 
         /// <summary>
@@ -112,7 +115,8 @@ namespace Microsoft.Identity.Client
                 scopes,
                 correlationId,
                 tokenType,
-                authenticationResultMetadata)
+                authenticationResultMetadata, 
+                null)
         {
 
         }
@@ -151,6 +155,11 @@ namespace Microsoft.Identity.Client
             CorrelationId = correlationID;
             ApiEvent = apiEvent;
             AuthenticationResultMetadata = new AuthenticationResultMetadata(tokenSource);
+            PoPDetails = new PoPDetails()
+            {
+                Kid = _authenticationScheme.KeyId,
+                Algorithm = _authenticationScheme.Algorithm
+            };
 
             if (msalAccessTokenCacheItem != null)
             {
@@ -255,6 +264,11 @@ namespace Microsoft.Identity.Client
         public AuthenticationResultMetadata AuthenticationResultMetadata { get; }
 
         /// <summary>
+        /// TODO; naming - this applies more generally to bounded tokens.
+        /// </summary>
+        public PoPDetails PoPDetails { get; }
+
+        /// <summary>
         /// Creates the content for an HTTP authorization header from this authentication result, so
         /// that you can call a protected API
         /// </summary>
@@ -276,5 +290,21 @@ namespace Microsoft.Identity.Client
                 _authenticationScheme?.AuthorizationHeaderPrefix ?? TokenType,
                 AccessToken);
         }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class PoPDetails
+    {
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Kid;
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public string Algorithm;
     }
 }

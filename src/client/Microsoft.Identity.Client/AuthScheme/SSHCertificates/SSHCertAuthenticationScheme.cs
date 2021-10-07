@@ -38,6 +38,9 @@ namespace Microsoft.Identity.Client.AuthScheme.SSHCertificates
 
         public string KeyId { get; }
 
+        public string Algorithm => null;
+
+
         public string FormatAccessToken(MsalAccessTokenCacheItem msalAccessTokenCacheItem)
         {
             return msalAccessTokenCacheItem.Secret;

@@ -27,9 +27,10 @@ namespace Microsoft.Identity.Client.AppConfig
         /// <remarks>
         /// See https://datatracker.ietf.org/doc/html/draft-ietf-oauth-signed-http-request-03#page-3 for details about signed HTTP requests.
         /// </remarks>
-        public PoPAuthenticationConfiguration()
+        public PoPAuthenticationConfiguration(bool doNotSignHttpRequest = false)
         {
             ConfidentialClientApplication.GuardMobileFrameworks();
+            DoNotSignHttpRequest = doNotSignHttpRequest;
         }
 
         /// <summary>
@@ -95,5 +96,11 @@ namespace Microsoft.Identity.Client.AppConfig
         /// or as part of the AuthorityInfo header associated with 200 response. Set it here to make it part of the Signed HTTP Request part of the POP token.
         /// </summary>
         public string Nonce { get; set; }
+
+        /// <summary>
+        /// TODO: comments or redesign the class to allow for this (maybe make this config read-only?)
+        /// 
+        /// </summary>
+        public bool DoNotSignHttpRequest { get; }
     }
 }

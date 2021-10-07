@@ -30,6 +30,11 @@ namespace Microsoft.Identity.Client.AuthScheme
         string KeyId { get; }
 
         /// <summary>
+        /// The algorithm used by the key, if any.
+        /// </summary>
+        string Algorithm { get; }
+
+        /// <summary>
         /// Creates the access token that goes into an Authorization HTTP header. 
         /// </summary>
         string FormatAccessToken(MsalAccessTokenCacheItem msalAccessTokenCacheItem);

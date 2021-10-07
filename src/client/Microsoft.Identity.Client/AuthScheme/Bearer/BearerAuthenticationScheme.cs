@@ -16,6 +16,8 @@ namespace Microsoft.Identity.Client.AuthScheme.Bearer
 
         public string KeyId => null;
 
+        public string Algorithm => null;
+
         public string FormatAccessToken(MsalAccessTokenCacheItem msalAccessTokenCacheItem)
         {
             return msalAccessTokenCacheItem.Secret;

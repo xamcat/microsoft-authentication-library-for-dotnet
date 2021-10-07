@@ -55,6 +55,8 @@ namespace Microsoft.Identity.Client.AuthScheme.PoP
         /// </summary>
         public string KeyId { get; }
 
+        public string Algorithm { get { return _popAuthenticationConfiguration.PopCryptoProvider.CryptographicAlgorithm; } }
+
         public IDictionary<string, string> GetTokenRequestParams()
         {
             return new Dictionary<string, string>() {
@@ -65,6 +67,11 @@ namespace Microsoft.Identity.Client.AuthScheme.PoP
 
         public string FormatAccessToken(MsalAccessTokenCacheItem msalAccessTokenCacheItem)
         {
+            if (_popAuthenticationConfiguration.DoNotSignHttpRequest)
+            {
+                return msalAccessTokenCacheItem.Secret;
+            }
+
             JObject header = new JObject
             {
                 { JsonWebTokenConstants.ReservedHeaderParameters.Algorithm, _popAuthenticationConfiguration.PopCryptoProvider.CryptographicAlgorithm },
@@ -82,7 +89,7 @@ namespace Microsoft.Identity.Client.AuthScheme.PoP
         {
             JToken publicKeyJWK = JToken.Parse(_popAuthenticationConfiguration.PopCryptoProvider.CannonicalPublicKeyJwk);
             List<JProperty> properties = new List<JProperty>(8);
-            
+
             // Mandatory parameters
             properties.Add(new JProperty(PoPClaimTypes.Cnf, new JObject(new JProperty(PoPClaimTypes.JWK, publicKeyJWK))));
             properties.Add(new JProperty(PoPClaimTypes.Ts, DateTimeHelpers.CurrDateTimeInUnixTimestamp()));
