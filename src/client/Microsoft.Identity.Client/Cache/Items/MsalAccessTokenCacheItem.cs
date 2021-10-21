@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Text;
 using Microsoft.Identity.Client.Cache.Keys;
 using Microsoft.Identity.Client.Internal;
 using Microsoft.Identity.Client.OAuth2;
@@ -251,11 +252,26 @@ namespace Microsoft.Identity.Client.Cache.Items
             return new MsalIdTokenCacheKey(Environment, TenantId, HomeAccountId, ClientId);
         }
 
-
-
         internal bool IsExpiredWithBuffer()
         {
             return ExpiresOn < DateTime.UtcNow + Constants.AccessTokenExpirationBuffer;
+        }
+
+        public string ToVerboseLogString()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.Append("AccessTokenCacheItem: ");
+            stringBuilder.Append($"ClientId: {ClientId} ");
+            stringBuilder.Append($"Scopes: {ScopeString} ");            
+            stringBuilder.Append($"Tenant: {TenantId} ");
+            stringBuilder.Append($"UserAssertionHash: {UserAssertionHash} ");
+            stringBuilder.Append($"CachedAt: {CachedAt} ");
+            stringBuilder.Append($"ExpiresOn: {ExpiresOn} ");
+            stringBuilder.Append($"RefreshOn: {RefreshOn} ");
+            stringBuilder.Append($"KeyId: {KeyId} ");
+            stringBuilder.Append($"Type: {TokenType} ");
+
+            return stringBuilder.ToString();
         }
     }
 }

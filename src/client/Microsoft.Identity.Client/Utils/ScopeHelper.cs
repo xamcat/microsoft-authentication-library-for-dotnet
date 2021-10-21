@@ -28,16 +28,12 @@ namespace Microsoft.Identity.Client.Utils
             return new HashSet<string>(userScopes.Concat(OAuth2Value.ReservedScopes));
         }
 
+        private static readonly char[] SingleSpace = new char[] { ' ' };
+
         public static HashSet<string> ConvertStringToScopeSet(string singleString)
         {
-            if (string.IsNullOrEmpty(singleString))
-            {
-                return new HashSet<string>();
-            }
-
-            return new HashSet<string>(
-                singleString.Split(' '),
-                StringComparer.OrdinalIgnoreCase);
+            string[] parts = singleString?.Split(SingleSpace, StringSplitOptions.RemoveEmptyEntries);
+            return CreateScopeSet(parts);
         }
 
         public static HashSet<string> CreateScopeSet(IEnumerable<string> input)

@@ -399,8 +399,8 @@ namespace NetFx
                             var cca = CreateCca();
                             const string _scopePrefix = "https://graph.microsoft.com/.default";
                             const string _tenantPrefix = "f8cdef31-a31e-4b4a-93e4-5f571e91255";
-                            int maxScopes = 10;
-                            int maxTenants = 10000;
+                            int maxScopes = 1000;
+                            int maxTenants = 100;
 
                             for (int tenant = 0; tenant < maxTenants; tenant++)
                             {
