@@ -7,9 +7,9 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Microsoft.Identity.Client.AuthScheme;
 using Microsoft.Identity.Client.Cache;
 using Microsoft.Identity.Client.Cache.Items;
+using Microsoft.Identity.Client.Extensibility;
 using Microsoft.Identity.Client.TelemetryCore.Internal.Events;
 
 namespace Microsoft.Identity.Client
@@ -163,7 +163,7 @@ namespace Microsoft.Identity.Client
 
             if (msalAccessTokenCacheItem != null)
             {
-                AccessToken = authenticationScheme.FormatAccessToken(msalAccessTokenCacheItem);
+                AccessToken = authenticationScheme.FormatAccessToken(msalAccessTokenCacheItem.Secret);
                 ExpiresOn = msalAccessTokenCacheItem.ExpiresOn;
                 ExtendedExpiresOn = msalAccessTokenCacheItem.ExtendedExpiresOn;
                 Scopes = msalAccessTokenCacheItem.ScopeSet;

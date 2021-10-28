@@ -10,6 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Identity.Client.AppConfig;
 using Microsoft.Identity.Client.Cache.Items;
+using Microsoft.Identity.Client.Extensibility;
 using Microsoft.Identity.Client.Internal;
 using Microsoft.Identity.Client.OAuth2;
 using Microsoft.Identity.Client.Utils;
@@ -65,11 +66,11 @@ namespace Microsoft.Identity.Client.AuthScheme.PoP
             };
         }
 
-        public string FormatAccessToken(MsalAccessTokenCacheItem msalAccessTokenCacheItem)
+        public string FormatAccessToken(string accessTokenFromIdentityProvider)
         {
             if (_popAuthenticationConfiguration.DoNotSignHttpRequest)
             {
-                return msalAccessTokenCacheItem.Secret;
+                return accessTokenFromIdentityProvider;
             }
 
             JObject header = new JObject
@@ -79,13 +80,13 @@ namespace Microsoft.Identity.Client.AuthScheme.PoP
                 { JsonWebTokenConstants.ReservedHeaderParameters.Type, PoPRequestParameters.PoPTokenType}
             };
 
-            JObject body = CreateBody(msalAccessTokenCacheItem);
+            JObject body = CreateBody(accessTokenFromIdentityProvider);
 
             string popToken = CreateJWS(body.ToString(Formatting.None), header.ToString(Formatting.None));
             return popToken;
         }
 
-        private JObject CreateBody(MsalAccessTokenCacheItem msalAccessTokenCacheItem)
+        private JObject CreateBody(string accessTokenFromIdentityProvider)
         {
             JToken publicKeyJWK = JToken.Parse(_popAuthenticationConfiguration.PopCryptoProvider.CannonicalPublicKeyJwk);
             List<JProperty> properties = new List<JProperty>(8);
@@ -93,7 +94,7 @@ namespace Microsoft.Identity.Client.AuthScheme.PoP
             // Mandatory parameters
             properties.Add(new JProperty(PoPClaimTypes.Cnf, new JObject(new JProperty(PoPClaimTypes.JWK, publicKeyJWK))));
             properties.Add(new JProperty(PoPClaimTypes.Ts, DateTimeHelpers.CurrDateTimeInUnixTimestamp()));
-            properties.Add(new JProperty(PoPClaimTypes.At, msalAccessTokenCacheItem.Secret));
+            properties.Add(new JProperty(PoPClaimTypes.At, accessTokenFromIdentityProvider));
             properties.Add(new JProperty(PoPClaimTypes.Nonce, _popAuthenticationConfiguration.Nonce ?? CreateSimpleNonce()));
 
             if (_popAuthenticationConfiguration.HttpMethod != null)

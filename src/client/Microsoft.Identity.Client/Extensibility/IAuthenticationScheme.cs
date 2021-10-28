@@ -4,12 +4,12 @@
 using System.Collections.Generic;
 using Microsoft.Identity.Client.Cache.Items;
 
-namespace Microsoft.Identity.Client.AuthScheme
+namespace Microsoft.Identity.Client.Extensibility
 {
     /// <summary>
     /// Used to modify the experience depending on the type of token asked. 
     /// </summary>
-    internal interface IAuthenticationScheme
+    public interface IAuthenticationScheme
     {
         /// <summary>
         /// Prefix for the HTTP header that has the token. E.g. "Bearer" or "POP"
@@ -37,7 +37,7 @@ namespace Microsoft.Identity.Client.AuthScheme
         /// <summary>
         /// Creates the access token that goes into an Authorization HTTP header. 
         /// </summary>
-        string FormatAccessToken(MsalAccessTokenCacheItem msalAccessTokenCacheItem);
+        string FormatAccessToken(string accessToken);
 
         /// <summary>
         /// Expected to match the token_type parameter returned by ESTS. Used to disambiguate

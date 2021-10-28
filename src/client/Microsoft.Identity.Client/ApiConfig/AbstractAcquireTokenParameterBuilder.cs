@@ -8,12 +8,12 @@ using System.Threading.Tasks;
 using Microsoft.Identity.Client.Utils;
 using Microsoft.Identity.Client.ApiConfig.Parameters;
 using Microsoft.Identity.Client.TelemetryCore.Internal.Events;
-using Microsoft.Identity.Client.AuthScheme;
 using Microsoft.Identity.Client.Internal;
 using System.Net.Http;
 using Microsoft.Identity.Client.AuthScheme.PoP;
 using Microsoft.Identity.Client.AppConfig;
 using Microsoft.Identity.Client.Instance;
+using Microsoft.Identity.Client.Extensibility;
 
 namespace Microsoft.Identity.Client
 {
@@ -402,12 +402,7 @@ namespace Microsoft.Identity.Client
             return (T)this;
         }
 
-        internal /* for testing */ T WithAuthenticationScheme(IAuthenticationScheme scheme)
-        {
-            CommonParameters.AuthenticationScheme = scheme ?? throw new ArgumentNullException(nameof(scheme));
-            return (T)this;
-        }
-
+      
         /// <summary>
         /// Validates the parameters of the AcquireToken operation.
         /// </summary>

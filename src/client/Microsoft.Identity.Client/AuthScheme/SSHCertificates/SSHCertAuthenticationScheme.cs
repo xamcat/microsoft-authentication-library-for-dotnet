@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.Identity.Client.Cache.Items;
+using Microsoft.Identity.Client.Extensibility;
 using Microsoft.Identity.Client.OAuth2;
 
 namespace Microsoft.Identity.Client.AuthScheme.SSHCertificates
@@ -41,9 +42,9 @@ namespace Microsoft.Identity.Client.AuthScheme.SSHCertificates
         public string Algorithm => null;
 
 
-        public string FormatAccessToken(MsalAccessTokenCacheItem msalAccessTokenCacheItem)
+        public string FormatAccessToken(string accessTokenFromIdentityProvider)
         {
-            return msalAccessTokenCacheItem.Secret;
+            return accessTokenFromIdentityProvider;
         }
 
         public IDictionary<string, string> GetTokenRequestParams()

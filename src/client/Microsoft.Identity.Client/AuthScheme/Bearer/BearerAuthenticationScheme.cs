@@ -3,6 +3,7 @@
 
 using System.Collections.Generic;
 using Microsoft.Identity.Client.Cache.Items;
+using Microsoft.Identity.Client.Extensibility;
 
 namespace Microsoft.Identity.Client.AuthScheme.Bearer
 {
@@ -18,9 +19,9 @@ namespace Microsoft.Identity.Client.AuthScheme.Bearer
 
         public string Algorithm => null;
 
-        public string FormatAccessToken(MsalAccessTokenCacheItem msalAccessTokenCacheItem)
+        public string FormatAccessToken(string accessToken)
         {
-            return msalAccessTokenCacheItem.Secret;
+            return accessToken;
         }
 
         public IDictionary<string, string> GetTokenRequestParams()
