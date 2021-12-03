@@ -444,30 +444,6 @@ namespace Microsoft.Identity.Test.Integration.HeadlessTests
                 }
             });
         }
-
-        private static RsaSecurityKey CreateRsaSecurityKey()
-        {
-#if NET_FX
-            RSA rsa = RSA.Create(2048);
-#else
-            RSA rsa = new RSACryptoServiceProvider(2048);
-#endif
-            // the reason for creating the RsaSecurityKey from RSAParameters is so that a SignatureProvider created with this key
-            // will own the RSA object and dispose it. If we pass a RSA object, the SignatureProvider does not own the object, the RSA object will not be disposed.
-            RSAParameters rsaParameters = rsa.ExportParameters(true);
-            RsaSecurityKey rsaSecuirtyKey = new RsaSecurityKey(rsaParameters) { KeyId = CreateRsaKeyId(rsaParameters) };
-            rsa.Dispose();
-            return rsaSecuirtyKey;
-        }
-
-        private static string CreateRsaKeyId(RSAParameters rsaParameters)
-        {
-            byte[] kidBytes = new byte[rsaParameters.Exponent.Length + rsaParameters.Modulus.Length];
-            Array.Copy(rsaParameters.Exponent, 0, kidBytes, 0, rsaParameters.Exponent.Length);
-            Array.Copy(rsaParameters.Modulus, 0, kidBytes, rsaParameters.Exponent.Length, rsaParameters.Modulus.Length);
-            using (var sha2 = SHA256.Create())
-                return Base64UrlEncoder.Encode(sha2.ComputeHash(kidBytes));
-        }
     }
 
     public class RSACertificatePopCryptoProvider : IPoPCryptoProvider
@@ -509,4 +485,5 @@ namespace Microsoft.Identity.Test.Integration.HeadlessTests
             return $@"{{""e"":""{Base64UrlHelpers.Encode(rsaPublicKey.Exponent)}"",""kty"":""RSA"",""n"":""{Base64UrlHelpers.Encode(rsaPublicKey.Modulus)}""}}";
         }
     }
+
 }

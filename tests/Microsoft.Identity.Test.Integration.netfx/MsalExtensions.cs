@@ -13,8 +13,18 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Microsoft.Identity.Test.Integration
 {
+    /// <summary>
+    /// Helper methods for creating 
+    /// </summary>
     internal static class MsalExtensions
     {
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="builder"></param>
+        /// <param name="popCredentials"></param>
+        /// <returns></returns>
         public static AcquireTokenForClientParameterBuilder WithPoPSignedRequest(
             this AcquireTokenForClientParameterBuilder builder,
             SigningCredentials popCredentials) // TODO: this only supports RSA for now
@@ -32,7 +42,7 @@ namespace Microsoft.Identity.Test.Integration
 
             var popAuthenticationConfiguration
                 = new PoPAuthenticationConfiguration()
-                {
+            {
                     SignHttpRequest = false,
                     PopCryptoProvider = new SigningCredentialsToPopCryptoProviderAdapter(popCredentials, assertNotSigned: true)
                 };
