@@ -32,6 +32,7 @@ namespace Microsoft.Identity.Client.Region
         // For information of the current api-version refer: https://docs.microsoft.com/en-us/azure/virtual-machines/windows/instance-metadata-service#versioning
         private const string ImdsEndpoint = "http://169.254.169.254/metadata/instance/compute/location";
         private const string DefaultApiVersion = "2020-06-01";
+        private const int DefailtImdsCallTimeOut = 5000;
 
         private readonly IHttpManager _httpManager;
         private readonly int _imdsCallTimeoutMs;
@@ -41,7 +42,7 @@ namespace Microsoft.Identity.Client.Region
 
         public RegionManager(
             IHttpManager httpManager,
-            int imdsCallTimeout = 2000,
+            int imdsCallTimeout = DefailtImdsCallTimeOut,
             bool shouldClearStaticCache = false) // for test
         {
             _httpManager = httpManager;
@@ -188,12 +189,21 @@ namespace Microsoft.Identity.Client.Region
                 // A bad request occurs when the version in the IMDS call is no longer supported.
                 if (response.StatusCode == HttpStatusCode.BadRequest)
                 {
+                    logger.Warning($"[Region discovery] Call to local IMDS failed with status code {response.StatusCode}. Region: {region}. Retrying with updated IMDS Endpoint.");
                     string apiVersion = await GetImdsUriApiVersionAsync(logger, headers, requestCancellationToken).ConfigureAwait(false); // Get the latest version
                     imdsUri = BuildImdsUri(apiVersion);
                     response = await _httpManager.SendGetAsync(BuildImdsUri(apiVersion), headers, logger, retry: false, GetCancellationToken(requestCancellationToken))
                         .ConfigureAwait(false); // Call again with updated version
                 }
 
+                if (response.StatusCode != HttpStatusCode.OK || response.Body.IsNullOrEmpty())
+                {
+                    logger.Warning($"[Region discovery] Call to local IMDS failed with status code {response.StatusCode} or an empty response. Retrying request to IMDS.");
+
+                    response = await _httpManager.SendGetAsync(imdsUri, headers, logger, retry: false, GetCancellationToken(requestCancellationToken))
+                    .ConfigureAwait(false);
+                }
+                
                 if (response.StatusCode == HttpStatusCode.OK && !response.Body.IsNullOrEmpty())
                 {
                     region = response.Body;
