@@ -201,7 +201,7 @@ namespace Microsoft.Identity.Client.OAuth2
                 }
             }
         }
-
+    
         public static T CreateResponse<T>(HttpResponse response, RequestContext requestContext)
         {
             if (response.StatusCode != HttpStatusCode.OK)

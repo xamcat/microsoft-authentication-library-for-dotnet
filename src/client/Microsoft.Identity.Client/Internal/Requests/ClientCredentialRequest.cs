@@ -140,7 +140,7 @@ namespace Microsoft.Identity.Client.Internal.Requests
         private Dictionary<string, string> GetBodyParameters()
         {
             var dict = new Dictionary<string, string>
-            {
+            {                
                 [OAuth2Parameter.GrantType] = OAuth2GrantType.ClientCredentials,
                 [OAuth2Parameter.Scope] = AuthenticationRequestParameters.Scope.AsSingleString()
             };

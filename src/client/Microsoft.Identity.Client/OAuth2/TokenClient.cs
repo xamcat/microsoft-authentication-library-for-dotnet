@@ -126,20 +126,7 @@ namespace Microsoft.Identity.Client.OAuth2
             CancellationToken cancellationToken)
         {
             _oAuth2Client.AddBodyParameter(OAuth2Parameter.ClientId, _requestParams.AppConfig.ClientId);
-            _oAuth2Client.AddBodyParameter(OAuth2Parameter.ClientInfo, "1");
-
-
-            if (_serviceBundle.Config.ClientCredential != null)
-            {
-                await _serviceBundle.Config.ClientCredential.AddConfidentialClientParametersAsync(
-                    _oAuth2Client,
-                    _requestParams.RequestContext.Logger,
-                    _serviceBundle.PlatformProxy.CryptographyManager,                    
-                    _requestParams.AppConfig.ClientId,
-                    _requestParams.Authority,
-                    _requestParams.SendX5C, 
-                    cancellationToken).ConfigureAwait(false);
-            }
+            
 
             _oAuth2Client.AddBodyParameter(OAuth2Parameter.Scope, scopes);
 
@@ -192,6 +179,11 @@ namespace Microsoft.Identity.Client.OAuth2
                     _oAuth2Client.AddHeader(pair.Key, pair.Value);
                 }
             }
+        }
+
+        public void AddBodyParameter(string key, string value)
+        {
+            _oAuth2Client.AddBodyParameter(key, value);
         }
 
         public void AddHeaderToClient(string name, string value)
