@@ -51,8 +51,6 @@ namespace Microsoft.Identity.Client.Internal.Requests
             acquireTokenParameters.LogParameters(AuthenticationRequestParameters.RequestContext.Logger);
         }
 
-
-
         /// <summary>
         /// Return a custom set of scopes to override the default MSAL logic of merging
         /// input scopes with reserved scopes (openid, profile etc.)
@@ -262,8 +260,6 @@ namespace Microsoft.Identity.Client.Internal.Requests
             IDictionary<string, string> additionalBodyParameters,
             CancellationToken cancellationToken)
         {
-           
-
             var tokenResponse = SendTokenRequestAsync(
                 AuthenticationRequestParameters.Authority.GetTokenEndpoint(),
                 additionalBodyParameters,
@@ -286,7 +282,30 @@ namespace Microsoft.Identity.Client.Internal.Requests
                 tokenClient.AddHeaderToClient(CcsHeader.Value.Key, CcsHeader.Value.Value);
             }
 
-            if (ServiceBundle.Config.ClientCredential != null)
+            await AddClientAssertionBodyParametersAsync(tokenEndpoint, tokenClient, cancellationToken).ConfigureAwait(false);
+
+            return await tokenClient.SendTokenRequestAsync(
+                additionalBodyParameters,
+                scopes,
+                tokenEndpoint,
+                cancellationToken).ConfigureAwait(false);
+        }
+
+        private async Task AddClientAssertionBodyParametersAsync(string tokenEndpoint, TokenClient tokenClient, CancellationToken cancellationToken)
+        {
+            if (AuthenticationRequestParameters.ClientAssertionOverride != null)
+            {
+                IReadOnlyList<KeyValuePair<string, string>> assertionBodyParameters =
+                    AuthenticationRequestParameters.ClientAssertionOverride(tokenEndpoint);
+                if (assertionBodyParameters != null)
+                {
+                    foreach (var assertionBodyParameter in assertionBodyParameters)
+                    {
+                        tokenClient.AddBodyParameter(assertionBodyParameter);
+                    }
+                }
+            }
+            else if (ServiceBundle.Config.ClientCredential != null)
             {
                 await ServiceBundle.Config.ClientCredential.AddClientAssertionBodyParametersAsync(
                     tokenClient,
@@ -297,12 +316,6 @@ namespace Microsoft.Identity.Client.Internal.Requests
                     AuthenticationRequestParameters.SendX5C,
                     cancellationToken).ConfigureAwait(false);
             }
-
-            return await tokenClient.SendTokenRequestAsync(
-                additionalBodyParameters,
-                scopes,
-                tokenEndpoint,
-                cancellationToken).ConfigureAwait(false);
         }
 
         //The AAD backup authentication system header is used by the AAD backup authentication system service

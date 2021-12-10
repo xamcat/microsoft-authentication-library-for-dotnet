@@ -43,7 +43,6 @@ namespace Microsoft.Identity.Client.Internal.Requests
         {
             var dict = new Dictionary<string, string>
             {
-                [OAuth2Parameter.ClientInfo] =  "1",
                 [OAuth2Parameter.GrantType] = OAuth2GrantType.RefreshToken,
                 [OAuth2Parameter.RefreshToken] = refreshTokenSecret
             };

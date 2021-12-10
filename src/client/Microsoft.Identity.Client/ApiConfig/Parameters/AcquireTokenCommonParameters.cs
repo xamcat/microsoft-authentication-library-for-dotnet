@@ -29,6 +29,13 @@ namespace Microsoft.Identity.Client.ApiConfig.Parameters
 
         public PoPAuthenticationConfiguration PopAuthenticationConfiguration { get; set; }
 
+
+        /// <summary>
+        /// If set, the client assertion parameters should be ignored and these parameters should be set.
+        /// The input string is the token endpoint.
+        /// </summary>
+        public Func<string, IReadOnlyList<KeyValuePair<string, string>>> ClientAssertionOverride { get; internal set; }
+
         public void AddApiTelemetryFeature(ApiTelemetryFeature feature)
         {
             _apiTelemetry[MatsConverter.AsString(feature)] = TelemetryConstants.True;
