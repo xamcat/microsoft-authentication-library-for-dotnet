@@ -488,10 +488,11 @@ namespace Microsoft.Identity.Test.Unit.PublicApiTests
                             new KeyValuePair<string, string>("param2", "val2"),                            
                         };
                     };
-                MockHttpMessageHandler handler = httpManager.AddMockHandlerSuccessfulClientCredentialTokenResponseMessage();
+                MockHttpMessageHandler handler = httpManager.AddMockHandlerSuccessfulClientCredentialTokenResponseMessage();                
 
                 var result = await app.AcquireTokenForClient(TestConstants.s_scope.ToArray())
-                    .WithClientAssertionOverride(clientAssertionOverride, "key1")
+                    .WithKeyId("key1")
+                    .WithClientAssertionOverride(clientAssertionOverride)                        
                     .ExecuteAsync()
                     .ConfigureAwait(false);
 
@@ -504,7 +505,8 @@ namespace Microsoft.Identity.Test.Unit.PublicApiTests
                 Assert.AreEqual("key1", (app.AppTokenCache as ITokenCacheInternal).Accessor.GetAllAccessTokens().Single().KeyId);
 
                 result = await app.AcquireTokenForClient(TestConstants.s_scope.ToArray())
-                    .WithClientAssertionOverride(clientAssertionOverride, "key1")
+                    .WithKeyId("key1")
+                    .WithClientAssertionOverride(clientAssertionOverride)
                     .ExecuteAsync()
                     .ConfigureAwait(false);
                 
@@ -517,8 +519,8 @@ namespace Microsoft.Identity.Test.Unit.PublicApiTests
 
 
                 httpManager.AddMockHandlerSuccessfulClientCredentialTokenResponseMessage();
-                result = await app.AcquireTokenForClient(TestConstants.s_scope.ToArray())
-                 .WithClientAssertionOverride(clientAssertionOverride, null)
+                result = await app.AcquireTokenForClient(TestConstants.s_scope.ToArray())                 
+                 .WithClientAssertionOverride(clientAssertionOverride)
                  .ExecuteAsync()
                  .ConfigureAwait(false);
 
